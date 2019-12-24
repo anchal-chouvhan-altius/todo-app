@@ -17,6 +17,7 @@ class LoginComponent extends Component {
         // this.handlePasswordChange = this.handlePasswordChange.bind(this)
         this.handleChange = this.handleChange.bind(this)
         this.loginClicked = this.loginClicked.bind(this)
+        this.forgotPasswordClicked = this.forgotPasswordClicked.bind(this)
         // this.addRecipe =this.addRecipe.bind(this)
     }
     handleChange(event){
@@ -24,6 +25,15 @@ class LoginComponent extends Component {
         this.setState({
             [event.target.name]:event.target.value
         })
+    }
+    forgotPasswordClicked() {
+        let condition = AuthenticationService.checkInternet();
+        if (condition) {
+            console.log("online---");
+            this.props.history.push('/forgotPassword')
+        } else {
+            alert("You are offline.");
+        }
     }
     // handleUsernameChange(event){
     // console.log(event.target.value);
@@ -93,21 +103,26 @@ if (!('indexedDB' in window)) {
     // };
     // console.log("After open request")
   }
-  
-  
-
-AuthenticationService.executeJwtAuthenticationService(this.state.username,this.state.password)
-.then(
-() => {
+  if(this.state.username != null && this.state.username != '' && this.state.password != null && this.state.password != ''){
     AuthenticationService.registerSuccessfullLogin(this.state.username,this.state.password);
     this.props.history.push(`/welcome/${this.state.username}`)
-}
-).catch(
-() => {
-    this.setState({showSuccessMessage:false})
-    this.setState({hasLoginFailed:true}) 
-}
-)
+  }else{
+      alert("Please enter username & password")
+  }
+  
+
+// AuthenticationService.executeJwtAuthenticationService(this.state.username,this.state.password)
+// .then(
+// () => {
+//     AuthenticationService.registerSuccessfullLogin(this.state.username,this.state.password);
+//     this.props.history.push(`/welcome/${this.state.username}`)
+// }
+// ).catch(
+// () => {
+//     this.setState({showSuccessMessage:false})
+//     this.setState({hasLoginFailed:true}) 
+// }
+// )
     }
     
 render(){
@@ -121,7 +136,8 @@ render(){
                 {this.state.hasLoginFailed && <div className="alert alert-warning">Login failed</div>}
                 <br/>Username : <input type="text" name="username" id="username" value={this.state.username} onChange={this.handleChange}/><br/><br/>
                 Password : <input type="password" name="password" id="password" value={this.state.password} onChange={this.handleChange} /><br/><br/>
-                <button className="btn btn-success" onClick={this.loginClicked}>Login</button>
+                <button className="btn btn-success myBtn" onClick={this.loginClicked}>Login</button><br/>
+                <br/><br/><button className="btn btn-success myBtn" onClick={this.forgotPasswordClicked}>Forgot Password</button>
                 </div>
             </div>
         )

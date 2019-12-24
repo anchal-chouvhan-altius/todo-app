@@ -3,7 +3,12 @@ const assets = [
   '/',
   '/index.html',
   '/index.js',
-   '/logo.png'
+   '/logo.png',
+   '/components/todo/TodoApp.jsx',
+   '/components/todo/HeaderComponent.jsx',
+   '/components/todo/FooterComponent.jsx',
+   '/components/todo/LoginComponent.jsx'
+
 ];
 
 // This optional code is used to register a service worker.

@@ -2,6 +2,7 @@ import axios from 'axios'
 import {API_URL} from '../../Constants'
 
 export const USER_NAME_SESSION_ATTRIBUTE_NAME = 'authenticateUser'
+export const PASSWORD_SESSION_ATTRIBUTE_NAME = 'authenticatePassword'
 
 class AuthenticationService {
 
@@ -33,10 +34,12 @@ class AuthenticationService {
 
     registerSuccessfullLogin(username, password) {
         sessionStorage.setItem(USER_NAME_SESSION_ATTRIBUTE_NAME, username);
+        sessionStorage.setItem(PASSWORD_SESSION_ATTRIBUTE_NAME, password);
         this.setupAxiosInterceptors(this.createBasicAuthToken(username, password));
     }
     logout() {
         sessionStorage.removeItem(USER_NAME_SESSION_ATTRIBUTE_NAME);
+        sessionStorage.removeItem(PASSWORD_SESSION_ATTRIBUTE_NAME);
     }
     isUserLoggedIn() {
         let user = sessionStorage.getItem(USER_NAME_SESSION_ATTRIBUTE_NAME);
@@ -69,6 +72,12 @@ class AuthenticationService {
                 return config
             }
         )
+    }
+    checkInternet() {
+        const condition = navigator.onLine ? 'online' : 'offline';
+        if (condition === 'online')
+            return true;
+        return false;
     }
 
     // CreateObjectStore(storeName) {

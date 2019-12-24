@@ -38,7 +38,7 @@ class TodoComponent extends Component {
             } else {
 
                 var db;
-                var request = indexedDB.open("todo-app", 4);
+                var request = indexedDB.open("todo-app", 5);
                 request.onerror = function (event) {
                     console.error("Database error: " + event.target.errorCode);
                     console.log("Why didn't you allow my web app to use IndexedDB?!");
@@ -92,16 +92,20 @@ class TodoComponent extends Component {
 
             this.props.history.push('/todos');
             console.log("call api");
-            TodoDataService.createTodo(username, todo).then(
-                () => this.props.history.push('/todos')
-            )
+            // if (AuthenticationService.checkInternet()) {
+            //     TodoDataService.createTodo(username, todo).then(
+            //         () => this.props.history.push('/todos')
+            //     )
+            // } else {
+            //     alert("You are offline. You can not add new todo");
+            // }
         } else {
             console.log("inside else update");
             if (!('indexedDB' in window)) {
                 alert('This browser does not support IndexedDB');
             } else {
                 var db;
-                var request = indexedDB.open("todo-app", 4);
+                var request = indexedDB.open("todo-app", 5);
                 request.onerror = function (event) {
                     console.error("Database error: " + event.target.errorCode);
                     console.log("Why didn't you allow my web app to use IndexedDB?!");
@@ -136,7 +140,7 @@ class TodoComponent extends Component {
                         // data.description = values.description;
                         // console.log("request id----"+request.result.description)
                         let updatedTodo = {
-                            id:-1,
+                            id: -1,
                             USER_ID: parseInt(values.USER_ID),
                             description: values.description,
                             targetDate: values.targetDate
@@ -186,9 +190,13 @@ class TodoComponent extends Component {
 
             }
             this.props.history.push('/todos')
-            TodoDataService.updateTodo(username, this.state.id, todo).then(
-                () => this.props.history.push('/todos')
-            )
+            // if (AuthenticationService.checkInternet()) {
+            //     TodoDataService.updateTodo(username, this.state.id, todo).then(
+            //         () => this.props.history.push('/todos')
+            //     )
+            // } else {
+            //     alert("You are offline");
+            // }
         }
     }
 
@@ -205,31 +213,31 @@ class TodoComponent extends Component {
         //     }))
     }
 
-    getIndexedDBDataById(){
+    getIndexedDBDataById() {
         var db;
-            var request = indexedDB.open("todo-app", 4);
-            request.onerror = function (event) {
-                console.error("Database error: " + event.target.errorCode);
-                console.log("Why didn't you allow my web app to use IndexedDB?!");
-            }.bind(this);
+        var request = indexedDB.open("todo-app", 5);
+        request.onerror = function (event) {
+            console.error("Database error: " + event.target.errorCode);
+            console.log("Why didn't you allow my web app to use IndexedDB?!");
+        }.bind(this);
         request.onsuccess = function (event) {
-        db = event.target.result;
-        var transaction = db.transaction(['todo'], 'readwrite');
-        var todo = transaction.objectStore('todo');
-        // var getRequest = todo.get(this.state.USER_ID);
-        var getRequest = todo.get(parseInt(this.state.USER_ID));
-        getRequest.onerror = function (event) {
-          console.log("Error occured while fetching data");
+            db = event.target.result;
+            var transaction = db.transaction(['todo'], 'readwrite');
+            var todo = transaction.objectStore('todo');
+            // var getRequest = todo.get(this.state.USER_ID);
+            var getRequest = todo.get(parseInt(this.state.USER_ID));
+            getRequest.onerror = function (event) {
+                console.log("Error occured while fetching data");
+            }.bind(this);
+            getRequest.onsuccess = function (event) {
+                console.log("inside on success");
+                console.log("---result---" + getRequest.result);
+                this.setState({
+                    description: getRequest.result.description,
+                    targetDate: moment(getRequest.result.targetDate).format('YYYY-MM-DD')
+                });
+            }.bind(this);
         }.bind(this);
-        getRequest.onsuccess = function (event) {
-            console.log("inside on success");
-        console.log("---result---"+getRequest.result);
-        this.setState({
-            description: getRequest.result.description, 
-            targetDate: moment(getRequest.result.targetDate).format('YYYY-MM-DD')
-        });
-        }.bind(this);
-    }.bind(this);      
     }
 
     validate(values) {
